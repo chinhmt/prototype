@@ -1,0 +1,21 @@
+{
+  "name": "prototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "prototype.js",
+  "scripts": {
+    "start": "electron .",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=icon.icns --prune=true --out=../release --extra-resource=../env-linux",
+    "package-macos": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icon.icns --prune=true --out=../release --extra-resource=../env-darwin",
+    "package-windows": "electron-packager . prototype --overwrite --platform=win32 --arch=ia32 --icon=icon.icns --prune=true --out=..\\release --extra-resource=..\\env-win32 --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Prototype\""
+  },
+  "author": "thmsbfft",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^5.0.5",
+    "electron-packager": "^14.0.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
