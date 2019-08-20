@@ -1,33 +1,146 @@
 <html>
-<head>
-  <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <title>Prototype</title>
-  <link rel="stylesheet" type="text/css" href="index.css" />
+  <head>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8" />
+    <title>Prototype</title>
+    <!-- <link rel="stylesheet" type="text/css" href="index.css" /> -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
 
-  <!-- Configure and load Thebe !-->
-  <script type="text/x-thebe-config">
-    {
-      bootstrap: true,
-      kernelOptions: {
-        name: "python3",
-        serverSettings: {
-          "baseUrl": "http://localhost:8888",
-          "token": "test-secret"
-        }
-      },
-    }
-  </script>
-  <script type="text/javascript" src="https://unpkg.com/thebelab@^0.4.0" ></script>
-  <!-- <script type="text/javascript" src="../lib/index.js"></script> -->
-  <!-- load a local thebe: -->
+    <!-- Configure and load Thebe !-->
+    <!-- <script type="text/x-thebe-config">
+      {
+        bootstrap: true,
+        kernelOptions: {
+          name: "python3",
+          serverSettings: {
+            "baseUrl": "http://192.168.1.10:8888",
+            "token": "test-secret"
+          }
+        },
+      }
+    </script> -->
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/thebelab@^0.4.0"
+    ></script>
+    <!-- <script type="text/javascript" src="../lib/index.js"></script> -->
+    <!-- load a local thebe: -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- <h1>Prototype</h1>
+    <div><pre data-executable="true" data-language="python"></pre></div>
+    <div><pre data-executable="true" data-language="python"></pre></div>
+   -->
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script type="text/babel">
+      // document.getElementById('origin').innerHTML = location.origin;
 
-</head>
-<body>
-  <h1>Prototype</h1>
-  <p><pre data-executable="true" data-language="python"></pre></p>
-  <p><pre data-executable="true" data-language="python"></pre></p>
-<script type="text/javascript">
-document.getElementById('origin').innerHTML = location.origin;
-</script>
-</body>
+      // const cellContainer = document.querySelector(
+      //   '[data-id="cell_container"]'
+      // );
+      // const addCellBtn = document.querySelector('[data-id="add_cell"]');
+      // addCellBtn.addEventListener('click', () => {
+      //   cellContainer.appendChild();
+      // });
+
+      const Cell = ({ handleDeleteCell }) => {
+        return (
+          <div data-id="cell">
+            <pre data-executable="true" data-language="python" />
+            <button
+              data-id="delete_cell"
+              className="btn btn-danger"
+              onClick={handleDeleteCell}
+            >
+              Delete cell
+            </button>
+          </div>
+        );
+      };
+
+      const App = () => {
+        const [cells, setCells] = React.useState([
+          _.uniqueId('cell_'),
+          _.uniqueId('cell_')
+        ]);
+        const [url, setUrl] = React.useState('192.168.1.10');
+        const urlInputRef = React.createRef();
+
+        React.useEffect(() => {
+          const belabConfig = {
+            bootstrap: true,
+            kernelOptions: {
+              name: 'python3',
+              serverSettings: {
+                baseUrl: `http://${url}:8888`,
+                token: 'test-secret'
+              }
+            }
+          };
+          thebelab.bootstrap(belabConfig);
+
+          console.log(belabConfig.kernelOptions.serverSettings.baseUrl);
+        }, [url, cells]);
+
+        return (
+          <div className="container py-5">
+            <div className="d-flex justify-content-between align-items-center">
+              <h1>Prototype</h1>
+              <div className="d-flex">
+                <input type="text" className="form-control" ref={urlInputRef} />
+                <button
+                  className="btn btn-primary ml-1"
+                  onClick={() => {
+                    setUrl(urlInputRef.current.value);
+                  }}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            <div data-id="cell_container">
+              {cells.map(id => (
+                <Cell
+                  key={id}
+                  handleDeleteCell={() => {
+                    const newCells = _.remove(cells, cellId => cellId !== id);
+                    setCells(newCells);
+                  }}
+                />
+              ))}
+            </div>
+
+            <hr />
+
+            <button
+              data-id="add_cell"
+              className="btn btn-primary"
+              onClick={() => {
+                setCells([...cells, _.uniqueId('cell_')]);
+              }}
+            >
+              Add cell
+            </button>
+          </div>
+        );
+      };
+
+      const root = document.querySelector('#root');
+      ReactDOM.render(<App />, root);
+    </script>
+  </body>
 </html>
